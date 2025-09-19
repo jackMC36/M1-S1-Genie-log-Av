@@ -88,10 +88,21 @@ public class UnitTests {
     @DisplayName("test - adding negative money to the current balance")
     void testMoneyAdd() {
         player p = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
-
         try {
             p.addMoney(-200);
-        } catch (IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
+            return;
+        }
+        fail();
+    }
+
+    @Test
+    @DisplayName("test - adding negative xp ")
+    void testAddingNegativeXp(){
+        player p = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
+        try {
+            UpdatePlayer.addXp(p,-1);
+        } catch(IllegalArgumentException e) {
             return;
         }
         fail();
