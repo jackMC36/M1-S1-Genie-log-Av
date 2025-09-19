@@ -1,5 +1,6 @@
 package re.forestier.edu;
 
+import org.apache.commons.lang3.ObjectUtils.Null;
 import org.junit.jupiter.api.*;
 
 import re.forestier.edu.rpg.UpdatePlayer;
@@ -34,11 +35,21 @@ public class UnitTests {
     }
 
     @Test
+    @DisplayName("test - notnull healthpoints")
+    void testPlayerHealth(){
+        player player = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
+        assertThat(player.healthpoints, is(notNullValue()));
+        
+    }
+
+    @Test
     @DisplayName("test - players level init")
     void testPlayerLevelInit() {
         player player = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
         assertThat(player.level, is(1));
     }
+
+    
 
     @Test
     @DisplayName("test - players levels")
@@ -106,6 +117,52 @@ public class UnitTests {
             return;
         }
         fail();
+    }
+
+    @Test
+    @DisplayName("test - end of round tests")
+    void testEndOfRoundSequence(){
+        player p1 = new player("Florian", "Grognak le barbare", "DWARF", 100, new ArrayList<>());
+        UpdatePlayer.majFinDeTour(p1);
+        assertThat(p1.currenthealthpoints, is(0));
+        
+        p1.currenthealthpoints = 1;
+        p1.healthpoints = 8;
+
+        UpdatePlayer.majFinDeTour(p1);
+        assertThat(p1.currenthealthpoints, is(2));
+        
+
+        p1.inventory.add("Holy Elixir");
+        UpdatePlayer.majFinDeTour(p1);
+        assertThat(p1.currenthealthpoints, is(4));
+        
+        player p2 = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
+        
+        p1.currenthealthpoints = 1;
+        p1.healthpoints = 8;
+
+        UpdatePlayer.majFinDeTour(p2);
+
+        assertThat(p2.currenthealthpoints, is(3));
+        
+        player p3 = new player("Florian", "Grognak le barbare", "ARCHER", 100, new ArrayList<>());
+
+        p3.currenthealthpoints = 1;
+        p3.healthpoints = 8;
+
+        UpdatePlayer.majFinDeTour(p3);
+
+        assertThat(p3.currenthealthpoints, is(2));
+        
+        p3.inventory.add("Magic Bow");
+
+        
+        
+
+
+
+
     }
 
 }
