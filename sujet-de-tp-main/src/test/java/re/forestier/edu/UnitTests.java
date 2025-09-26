@@ -7,7 +7,7 @@ import re.forestier.edu.rpg.UpdatePlayer;
 import re.forestier.edu.rpg.player;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 
@@ -64,7 +64,7 @@ public class UnitTests {
         UpdatePlayer.addXp(player3, 57);
         assertThat(player3.level, is(4));
         player player4 = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
-        UpdatePlayer.addXp(player3, 111);
+        UpdatePlayer.addXp(player4, 111);
         assertThat(player4.level, is(5));                            
     }
 
@@ -120,49 +120,85 @@ public class UnitTests {
     }
 
     @Test
-    @DisplayName("test - end of round tests")
-    void testEndOfRoundSequence(){
+    @DisplayName("test - end of round - No Health")
+    void testEndOfRoundSequencePlayerisDead(){
         player p1 = new player("Florian", "Grognak le barbare", "DWARF", 100, new ArrayList<>());
+        p1.currenthealthpoints = 0;
+        p1.healthpoints = 10;
         UpdatePlayer.majFinDeTour(p1);
-        assertThat(p1.currenthealthpoints, is(0));
-        
-        p1.currenthealthpoints = 1;
-        p1.healthpoints = 8;
+        assertEquals(p1.currenthealthpoints, 0);
+    }
 
+    @Test
+    @DisplayName("test - end of round - Dwarf - No Items")
+    void testEndOfRoundSequencePlayerisDwarfWithNoItems(){
+        player p1 = new player("Florian", "Grognak le barbare", "DWARF", 100, new ArrayList<>());
+        p1.currenthealthpoints = 2;
+        p1.healthpoints = 10;
         UpdatePlayer.majFinDeTour(p1);
-        assertThat(p1.currenthealthpoints, is(2));
-        
-
+        assertEquals(p1.currenthealthpoints, 3);
+    }
+    
+    @Test
+    @DisplayName("test - end of round - Dwarf - Noly Elixir")
+    void testEndOfRoundSequencePlayerisDwarfWithHolyElixir(){
+        player p1 = new player("Florian", "Grognak le barbare", "DWARF", 100, new ArrayList<>());
+        p1.currenthealthpoints = 2;
+        p1.healthpoints = 10;
         p1.inventory.add("Holy Elixir");
         UpdatePlayer.majFinDeTour(p1);
-        assertThat(p1.currenthealthpoints, is(4));
-        
+        assertEquals(p1.currenthealthpoints, 4);
+    }
+
+    @Test
+    @DisplayName("test - end of round - Aventurer - No Items")
+    void testEndOfRoundSequencePlayerisAdventurerWithNoItems(){
         player p2 = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
-        
-        p1.currenthealthpoints = 1;
-        p1.healthpoints = 8;
-
+        p2.currenthealthpoints = 2;
+        p2.healthpoints = 10;
         UpdatePlayer.majFinDeTour(p2);
+        assertEquals(p2.currenthealthpoints, 4);
+    }
 
-        assertThat(p2.currenthealthpoints, is(3));
-        
+    @Test
+    @DisplayName("test - end of round - Archer - No Items")
+    void testEndOfRoundSequencePlayerisArcherWithNoItems(){        
         player p3 = new player("Florian", "Grognak le barbare", "ARCHER", 100, new ArrayList<>());
-
-        p3.currenthealthpoints = 1;
-        p3.healthpoints = 8;
-
+        p3.currenthealthpoints = 2;
+        p3.healthpoints = 10;
         UpdatePlayer.majFinDeTour(p3);
+        assertEquals(p3.currenthealthpoints,3);
+    }
 
-        assertThat(p3.currenthealthpoints, is(2));
-        
+        @Test
+    @DisplayName("test - end of round - Archer - Magic Bow")
+    void testEndOfRoundSequencePlayerisArcherWithMagicBow(){        
+        player p3 = new player("Florian", "Grognak le barbare", "ARCHER", 100, new ArrayList<>());
+        p3.currenthealthpoints = 2;
+        p3.healthpoints = 16;
         p3.inventory.add("Magic Bow");
+        UpdatePlayer.majFinDeTour(p3);
+        assertEquals(p3.currenthealthpoints,4);
+    }
 
-        
-        
+    @Test
+    @DisplayName("test - end of round - Aventurer - Full Health")
+    void testEndOfRoundSequencePlayerisAdventurerWithFullHealth(){
+        player p2 = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
+        p2.currenthealthpoints = 10;
+        p2.healthpoints = 10;
+        UpdatePlayer.majFinDeTour(p2);
+        assertEquals(p2.currenthealthpoints, 10);
+    }
 
-
-
-
+        @Test
+    @DisplayName("test - end of round - Aventurer - Full Health")
+    void testEndOfRoundSequencePlayerisAdventurerWithHalfHealth(){
+        player p2 = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
+        p2.currenthealthpoints = 5;
+        p2.healthpoints = 10;
+        UpdatePlayer.majFinDeTour(p2);
+        assertEquals(p2.currenthealthpoints, 10);
     }
 
 }
