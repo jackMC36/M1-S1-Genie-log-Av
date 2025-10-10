@@ -47,7 +47,15 @@ public class UnitTests {
     void testPlayerLevelInit() {
         player player = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
         assertThat(player.retrieveLevel(), is(1));
-    } 
+    }
+    
+    @Test
+    @DisplayName("test - correct player xp retrieval")
+    void testXpRetrieval(){
+        player player1 = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
+        UpdatePlayer.addXp(player1, 1);
+        assertEquals(player1.getXp(),1);
+    }
 
     
 
@@ -68,32 +76,54 @@ public class UnitTests {
         assertThat(player4.retrieveLevel(), is(5));                            
     }
 
+    @Test
+    @DisplayName("test - level up boolean value - false")
+    void testPlayerNoAbnormalLevelUp(){
+        player player1 = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
+        Boolean b = UpdatePlayer.addXp(player1, 0);
+        assertThat(b, is(false));
+    }
 
-    /*@Test
-    @DisplayName("test - removing more than the current balance")
-    void testMoneyRemovalPositive() {
-        player p = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
+    @Test
+    @DisplayName("test - level up boolean value - false")
+    void testPlayerNormalLevelUp(){
+        player player1 = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
+        Boolean b = UpdatePlayer.addXp(player1, 10);
+        assertThat(b, is(true));
+    }
 
+
+
+    @Test
+    @DisplayName("test - player money removal is done correctly - partial")
+    public void testRemoveMoneyValid() {
+        player p = new player("Test", "Avatar", "ARCHER", 100, new ArrayList<>());
+        p.removeMoney(50);
+        assertEquals(50, p.money.intValue());
+    }
+
+    @Test
+    @DisplayName("test - removing the correct amount")
+    public void testRemoveMoneyExactAmount() {
+        player p = new player("Test", "Avatar", "ARCHER", 100, new ArrayList<>());
+        p.removeMoney(100);
+        assertEquals(0, p.money.intValue());
+    }
+
+    @Test
+    @DisplayName("test - removing more than the balance")
+    public void testRemoveMoneyMoreAmount() {
+        player p = new player("Test", "Avatar", "ARCHER", 100, new ArrayList<>());
         try {
-            p.removeMoney(200);
+            p.removeMoney(101);
         } catch (IllegalArgumentException e) {
             return;
         }
         fail();
-    }*/
+    }
 
-    /*@Test
-    @DisplayName("test - removing a negative ammount to than the current balance")
-    void testMoneyRemovalNegative() {
-        player p = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
 
-        try {
-            p.removeMoney(-200);
-        } catch (IllegalArgumentException e) {
-            return;
-        }
-        fail();
-    }*/
+
 
    /*@Test
     @DisplayName("test - adding negative money to the current balance")
