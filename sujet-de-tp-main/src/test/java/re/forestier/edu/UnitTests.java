@@ -3,6 +3,7 @@ package re.forestier.edu;
 import org.apache.commons.lang3.ObjectUtils.Null;
 import org.junit.jupiter.api.*;
 
+import re.forestier.edu.rpg.Affichage;
 import re.forestier.edu.rpg.UpdatePlayer;
 import re.forestier.edu.rpg.player;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -10,6 +11,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UnitTests {
 
@@ -122,32 +124,30 @@ public class UnitTests {
         fail();
     }
 
+    @Test
+    @DisplayName("test - adding positive money increases balance")
+    void testAddMoneyPositive() {
+        player p = new player("Test", "Avatar", "ADVENTURER", 100, new ArrayList<>());
+        p.addMoney(50);
+        assertEquals(150, p.money.intValue());
+    }
 
+    @Test
+    @DisplayName("test - adding zero money doesn't change balance")
+    void testAddMoneyZero() {
+        player p = new player("Test", "Avatar", "ADVENTURER", 100, new ArrayList<>());
+        p.addMoney(0);
+        assertEquals(100, p.money.intValue());
+    }
 
+    @Test
+    @DisplayName("test - adding negative money to current balance")
+    void testAddMoneyNegative() {
+        player p = new player("Test", "Avatar", "ADVENTURER", 100, new ArrayList<>());
+        p.addMoney(-30);
+        assertEquals(70, p.money.intValue());
+    }
 
-   /*@Test
-    @DisplayName("test - adding negative money to the current balance")
-    void testMoneyAdd() {
-        player p = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
-        try {
-            p.addMoney(-200);
-        } catch(IllegalArgumentException e) {
-            return;
-        }
-        fail();
-    }*/
-
-    /*@Test
-    @DisplayName("test - adding negative xp ")
-    void testAddingNegativeXp(){
-        player p = new player("Florian", "Grognak le barbare", "ADVENTURER", 100, new ArrayList<>());
-        try {
-            UpdatePlayer.addXp(p,-1);
-        } catch(IllegalArgumentException e) {
-            return;
-        }
-        fail();
-    } */
 
     @Test
     @DisplayName("test - end of round - No Health")
@@ -157,6 +157,43 @@ public class UnitTests {
         p1.healthpoints = 10;
         UpdatePlayer.majFinDeTour(p1);
         assertEquals(p1.currenthealthpoints, 0);
+    }
+
+    @Test
+    @DisplayName("test - end of round - player at exactly half health")
+    void testEndOfRoundAtExactlyHalfHealth() {
+        player p = new player("Test", "Avatar", "ADVENTURER", 100, new ArrayList<>());
+        p.currenthealthpoints = 5;
+        p.healthpoints = 10;
+        
+        UpdatePlayer.majFinDeTour(p);
+        
+        assertEquals(5, p.currenthealthpoints); 
+    }
+
+    /*@Test
+    @DisplayName("test - end of round - odd health")
+    void testEndOfRoundWithOddHealthTotal() {
+        player p = new player("Test", "Avatar", "ADVENTURER", 100, new ArrayList<>());
+        p.currenthealthpoints = 4; 
+        p.healthpoints = 9;
+        
+        UpdatePlayer.majFinDeTour(p);
+        
+        assertEquals(5, p.currenthealthpoints); 
+    }*/
+
+    @Test
+    @DisplayName("test - end of round - test division vs multiplication mutation")
+    void testDivisionVsMultiplication() {
+        player p = new player("Test", "Avatar", "ADVENTURER", 100, new ArrayList<>());
+        p.currenthealthpoints = 10;
+        p.healthpoints = 8; 
+        
+        UpdatePlayer.majFinDeTour(p);
+        
+
+        assertEquals(8, p.currenthealthpoints);
     }
 
     @Test
@@ -230,5 +267,40 @@ public class UnitTests {
         UpdatePlayer.majFinDeTour(p2);
         assertEquals(p2.currenthealthpoints, 5); 
     }
+
+    /*@Test
+    @DisplayName("test - abilities are updated when player levels up")
+    void testAbilitiesUpdatedOnLevelUp() {
+        player player = new player("Test", "Avatar", "ADVENTURER", 100, new ArrayList<>());
+        
+        HashMap<String, Integer> initialAbilities = new HashMap<>(player.abilities);
+        
+        boolean leveledUp = UpdatePlayer.addXp(player, 10);
+        
+        assertThat(leveledUp, is(true));
+        
+        assertThat(player.abilities, is(not(equalTo(initialAbilities))));
+        
+        assertThat(player.abilities.get("INT"), is(2));
+        assertThat(player.abilities.get("CHA"), is(3));
+    }*/
+
+    @Test
+    @DisplayName("test - display player with inventory items")
+    void testAffichageWithInventory() {
+        player player = new player("Test", "Avatar", "ADVENTURER", 100, new ArrayList<>());
+        
+        player.inventory.add("Sword");
+        player.inventory.add("Magic Potion");
+        
+        String result = Affichage.afficherJoueur(player);
+        
+        assertThat(result, containsString("Inventaire :"));
+        assertThat(result, containsString("Sword"));
+        assertThat(result, containsString("Magic Potion"));
+    }
+
+
+    
 
 }
